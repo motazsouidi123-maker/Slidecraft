@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { HashRouter, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion'
+import { Magnetic, Hero3D, Signature, ServiceCard } from './ui'
 import { supabase, WA, MAIL } from './supabase'
 import Admin from './Admin'
 
 const grad = 'bg-gradient-to-r from-violet-500 to-cyan-400'
-const card = 'rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur p-6'
-const input = 'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 outline-none focus:border-cyan-400'
+const card = 'gborder relative rounded-3xl bg-[#0d0a1f]/70 backdrop-blur-xl p-6 transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_-20px_rgba(124,92,255,.5)]'
+const input = 'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 outline-none transition focus:border-cyan-400 focus:bg-white/[0.08] focus:shadow-[0_0_0_4px_rgba(34,211,238,.12)]'
 
 const Reveal = ({ children, delay = 0, className = '' }) => (
   <motion.div className={className} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
@@ -14,7 +15,7 @@ const Reveal = ({ children, delay = 0, className = '' }) => (
 )
 const Btn = ({ to, href, children, ghost }) => {
   const c = `inline-flex items-center justify-center rounded-full px-7 py-3 font-semibold transition hover:scale-105 ${ghost ? 'border border-white/20 hover:bg-white/10' : grad + ' text-black shadow-lg shadow-violet-500/30'}`
-  return to ? <Link to={to} className={c}>{children}</Link> : <a href={href} className={c}>{children}</a>
+  return <Magnetic>{to ? <Link to={to} className={c}>{children}</Link> : <a href={href} className={c}>{children}</a>}</Magnetic>
 }
 const Title = ({ k, children }) => (
   <Reveal className="mb-10 text-center">
@@ -38,12 +39,12 @@ function Nav() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#07050f]/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <Link to="/" className="text-xl font-extrabold"><span className={`${grad} bg-clip-text text-transparent`}>Slide</span>Craft</Link>
+        <Link to="/" className="flex items-center gap-2 text-xl font-extrabold tracking-tight"><span className={`grid h-8 w-8 place-items-center rounded-lg ${grad} text-sm text-black shadow-lg shadow-violet-500/40`}>S</span><span>Slide<span className="animgrad">Craft</span></span></Link>
         <nav className="hidden gap-8 md:flex">
-          {links.map(([to, l]) => <NavLink key={to} to={to} className={({ isActive }) => isActive ? 'text-cyan-400' : 'text-white/70 hover:text-white'}>{l}</NavLink>)}
+          {links.map(([to, l]) => <NavLink key={to} to={to} className="relative px-4 py-2 text-sm font-medium">{({ isActive }) => (<>{isActive && <motion.span layoutId="navpill" className="absolute inset-0 rounded-full bg-white/10 ring-1 ring-white/15" />}<span className={`relative transition ${isActive ? 'text-white' : 'text-white/60 hover:text-white'}`}>{l}</span></>)}</NavLink>)}
         </nav>
         <div className="hidden md:block"><Btn to="/order">Order Now</Btn></div>
-        <button className="text-2xl md:hidden" onClick={() => setOpen(!open)} aria-label="Menu">{open ? '✕' : '☰'}</button>
+        <button className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-xl md:hidden" aria-expanded={open} onClick={() => setOpen(!open)} aria-label="Menu">{open ? '✕' : '☰'}</button>
       </div>
       <AnimatePresence>
         {open && (
@@ -66,20 +67,24 @@ function Home() {
   ]
   return (
     <>
-      <section className="relative overflow-hidden px-5 pb-24 pt-40 text-center">
-        <motion.div className="absolute -left-20 top-20 h-80 w-80 rounded-full bg-violet-600/40 blur-[110px]" animate={{ x: [0, 60, 0], y: [0, 30, 0] }} transition={{ duration: 12, repeat: Infinity }} />
-        <motion.div className="absolute -right-20 top-40 h-80 w-80 rounded-full bg-cyan-500/30 blur-[110px]" animate={{ x: [0, -60, 0], y: [0, -30, 0] }} transition={{ duration: 14, repeat: Infinity }} />
-        <div className="relative mx-auto max-w-4xl">
-          <motion.span initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1 text-sm text-cyan-300">✨ Custom PowerPoint design service</motion.span>
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.7 }} className="mt-6 text-5xl font-extrabold leading-tight md:text-7xl">
-            Your Ideas, <span className={`${grad} bg-clip-text text-transparent`}>Beautifully Presented.</span>
+      <section className="relative overflow-hidden px-5 pb-24 pt-32 text-center md:pt-40">
+        <motion.div className="absolute -left-24 top-10 h-96 w-96 rounded-full bg-violet-600/35 blur-[120px]" animate={{ x: [0, 70, 0], y: [0, 40, 0] }} transition={{ duration: 14, repeat: Infinity }} />
+        <motion.div className="absolute -right-24 top-40 h-96 w-96 rounded-full bg-cyan-500/25 blur-[120px]" animate={{ x: [0, -70, 0], y: [0, -40, 0] }} transition={{ duration: 16, repeat: Infinity }} />
+        <div className="relative mx-auto max-w-5xl">
+          <motion.span initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1 text-xs uppercase tracking-[.25em] text-cyan-300 backdrop-blur">✦ Custom PowerPoint design service</motion.span>
+          <motion.h1 initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ delay: 0.1, duration: 0.9 }} className="mt-7 text-[2.9rem] font-black leading-[1.02] tracking-[-0.04em] sm:text-6xl md:text-8xl">
+            Your Ideas,<br /><span className="animgrad">Beautifully Presented.</span>
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mx-auto mt-6 max-w-2xl text-lg text-white/70">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="mx-auto mt-7 max-w-2xl text-lg text-white/65">
             SlideCraft designs custom PowerPoint presentations for students, universities and businesses — in English, French, Arabic and Italian. Tell us your topic, we deliver on time.
           </motion.p>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-10 flex flex-wrap justify-center gap-4">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-4">
             <Btn to="/order">Order Now →</Btn><Btn to="/services" ghost>See Services</Btn>
           </motion.div>
+          <Hero3D />
+          <div className="mt-8 flex flex-col items-center gap-2 text-[10px] tracking-[.4em] text-white/40" aria-hidden="true">
+            SCROLL<span className="relative h-9 w-5 rounded-full border border-white/30"><span className="wheel absolute left-1/2 top-2 h-1.5 w-1 -translate-x-1/2 rounded-full bg-cyan-300" /></span>
+          </div>
         </div>
       </section>
 
@@ -87,9 +92,7 @@ function Home() {
         <Title k="Services">What we create</Title>
         <div className="grid gap-4 md:grid-cols-3">
           {services.map((s, i) => (
-            <Reveal key={s.t} delay={i * 0.08} className={s.big ? 'md:col-span-2' : ''}>
-              <div className={`${card} h-full transition hover:border-cyan-400/40`}><div className="text-4xl">{s.icon}</div><h3 className="mt-4 text-xl font-bold">{s.t}</h3><p className="mt-2 text-white/60">{s.d}</p></div>
-            </Reveal>
+            <Reveal key={s.t} delay={i * 0.1} className={s.big ? 'md:col-span-2' : ''}><ServiceCard s={s} i={i} /></Reveal>
           ))}
         </div>
       </section>
@@ -132,8 +135,7 @@ function Services() {
       <Title k="Services">Presentations for every need</Title>
       <div className="grid gap-4 md:grid-cols-2">
         {services.map((s, i) => (
-          <Reveal key={s.t} delay={i * 0.08}><div className={`${card} h-full`}><div className="text-5xl">{s.icon}</div><h3 className="mt-4 text-2xl font-bold">{s.t}</h3><p className="mt-2 text-white/60">{s.d}</p>
-            <Link to="/order" className="mt-5 inline-block text-cyan-400 hover:underline">Order this →</Link></div></Reveal>
+          <Reveal key={s.t} delay={i * 0.1}><ServiceCard s={s} i={i} cta /></Reveal>
         ))}
       </div>
     </section>
@@ -148,6 +150,7 @@ function Order() {
   const [err, setErr] = useState('')
   const set = k => e => setF({ ...f, [k]: e.target.value })
   const today = new Date().toISOString().slice(0, 10)
+  const pct = Math.round([f.name, f.whatsapp, f.topic, f.deadline].filter(Boolean).length / 4 * 100)
 
   async function submit(e) {
     e.preventDefault(); setBusy(true); setErr('')
@@ -175,6 +178,7 @@ function Order() {
       <Title k="Order">Order your presentation</Title>
       <Reveal>
         <form onSubmit={submit} className={`${card} space-y-4`}>
+          <div><div className="h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div className={`h-full ${grad}`} animate={{ width: `${pct}%` }} /></div><p className="mt-1 text-xs text-white/40">{pct}% of required details filled</p></div>
           <L t="Your name *"><input required className={input} value={f.name} onChange={set('name')} placeholder="Full name" /></L>
           <L t="WhatsApp number * (with country code)"><input required type="tel" className={input} value={f.whatsapp} onChange={set('whatsapp')} placeholder="+212 6 00 00 00 00" /></L>
           <L t="Presentation topic *"><input required className={input} value={f.topic} onChange={set('topic')} placeholder="e.g. Climate change" /></L>
@@ -185,9 +189,9 @@ function Order() {
             <L t="Deadline *"><input required type="date" min={today} className={input} value={f.deadline} onChange={set('deadline')} /></L>
           </div>
           <L t="Additional instructions"><textarea rows="4" className={input} value={f.instructions} onChange={set('instructions')} placeholder="Colours, style, sources, anything we should know…" /></L>
-          <L t="Attach a file (optional, max 10 MB)"><input type="file" onChange={e => setFile(e.target.files[0] || null)} className="w-full text-sm text-white/70 file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-4 file:py-2 file:text-white" /></L>
-          {err && <p className="rounded-xl bg-red-500/15 p-3 text-sm text-red-300">{err}</p>}
-          <button disabled={busy} className={`w-full rounded-full ${grad} py-3.5 font-bold text-black transition hover:scale-[1.02] disabled:opacity-50`}>{busy ? 'Sending…' : 'Submit & continue on WhatsApp'}</button>
+          <L t="Attach a file (optional, max 10 MB)"><span className="flex cursor-pointer flex-col items-center gap-1 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] px-4 py-6 text-center transition hover:border-cyan-400 hover:bg-cyan-400/5"><span className="text-2xl">{file ? '✅' : '📎'}</span><span className="break-all text-sm text-white/70">{file ? file.name : 'Tap to choose a file'}</span><input type="file" className="sr-only" onChange={e => setFile(e.target.files[0] || null)} /></span></L>
+          {err && <motion.p role="alert" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: [0, -6, 6, 0] }} className="rounded-xl border border-red-400/30 bg-red-500/15 p-3 text-sm text-red-300">{err}</motion.p>}
+          <button disabled={busy} className={`w-full rounded-full ${grad} py-3.5 font-bold text-black shadow-lg shadow-violet-500/30 transition hover:scale-[1.02] active:scale-[.98] disabled:opacity-50`}>{busy ? <span className="inline-flex items-center gap-2"><span className="h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />Sending…</span> : 'Submit & continue on WhatsApp'}</button>
           <p className="text-center text-xs text-white/40">Your order is saved, then WhatsApp opens with your details ready to send.</p>
         </form>
       </Reveal>
@@ -210,12 +214,14 @@ function Contact() {
 }
 
 function Layout() {
-  const { pathname } = useLocation()
+  const location = useLocation(), pathname = location.pathname
+  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
     <>
       <Nav />
       <main className="min-h-screen">
-        <Routes>
+        <AnimatePresence mode="wait"><motion.div key={pathname} initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.35 }}>
+        <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/order" element={<Order />} />
@@ -223,11 +229,13 @@ function Layout() {
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<Home />} />
         </Routes>
+        </motion.div></AnimatePresence>
       </main>
-      <footer className="border-t border-white/10 px-5 py-8 text-center text-sm text-white/40">
-        © {new Date().getFullYear()} SlideCraft. All rights reserved.
+      <footer className="relative border-t border-white/10">
+        <Signature />
+        <p className="pb-8 text-center text-xs text-white/35">© {new Date().getFullYear()} SlideCraft. All rights reserved.</p>
       </footer>
     </>
   )
 }
-export default function App() { return <HashRouter><Layout /></HashRouter> }
+export default function App() { return <MotionConfig reducedMotion="user"><HashRouter><Layout /></HashRouter></MotionConfig> }
