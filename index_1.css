@@ -1,0 +1,32 @@
+@import "tailwindcss";
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(99,102,241,.22), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(34,211,238,.14), transparent 60%), #05060f;
+  background-attachment: fixed; color: #f4f6ff; -webkit-font-smoothing: antialiased;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 56px 56px; mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 75%);
+}
+select option { background: #14102a; color: #fff; }
+.gborder::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(167,139,250,.7), rgba(255,255,255,.06) 40%, rgba(34,211,238,.6));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.animgrad, .silver { background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shift 8s linear infinite; }
+.animgrad { background-image: linear-gradient(100deg, #a78bfa, #22d3ee, #818cf8, #e0e7ff, #a78bfa); }
+.silver { background-image: linear-gradient(110deg, #6b7280 0%, #f8fafc 25%, #9ca3af 45%, #fff 60%, #6b7280 100%); animation-duration: 6s; }
+@keyframes shift { to { background-position: -300% 0; } }
+@keyframes float { 50% { transform: translateY(-14px); } }
+.float { animation: float 6s ease-in-out infinite; }
+@keyframes wheel { 0% { opacity: 0; transform: translateY(0); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(12px); } }
+.wheel { animation: wheel 1.8s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
