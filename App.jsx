@@ -60,11 +60,6 @@ function Nav() {
 
 function Home() {
   const portfolio = [['from-violet-600 to-fuchsia-500', 'Startup Pitch Deck'], ['from-cyan-500 to-blue-600', 'Biology Research'], ['from-fuchsia-500 to-orange-400', 'Marketing Plan'], ['from-emerald-400 to-cyan-600', 'History Class Project']]
-  const reviews = [
-    ['Sara M.', 'University student', 'My thesis defence deck looked unbelievable. Delivered a day early!'],
-    ['Karim B.', 'Startup founder', 'The pitch deck helped us close our first round. Professional and fast.'],
-    ['Giulia R.', 'High-school student', 'Perfect Italian translation and a beautiful design. Got top marks!'],
-  ]
   return (
     <>
       <section className="relative overflow-hidden px-5 pb-24 pt-32 text-center md:pt-40">
@@ -98,7 +93,8 @@ function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-16">
-        <Title k="Portfolio">Recent work</Title>
+        <Title k="Portfolio">Sample designs</Title>
+        <p className="-mt-6 mb-8 text-center text-sm text-white/40">Illustrative style previews — not client projects.</p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {portfolio.map(([g, t], i) => (
             <Reveal key={t} delay={i * 0.08}>
@@ -111,10 +107,28 @@ function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-16">
-        <Title k="Testimonials">Loved by customers</Title>
+        <Title k="Why SlideCraft">Built around your needs</Title>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[['🌍', 'Four languages', 'English, French, Arabic and Italian.'], ['🎨', 'Custom design', 'Made for your topic, not a recycled template.'], ['⏰', 'Your deadline', 'Tell us the date when you order.'], ['💬', 'Direct contact', 'Your order opens straight in WhatsApp.']].map(([i, t, d], n) => (
+            <Reveal key={t} delay={n * 0.08}><div className={`${card} h-full`}><div className="text-3xl">{i}</div><h3 className="mt-3 font-bold">{t}</h3><p className="mt-1 text-sm text-white/60">{d}</p></div></Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <Title k="Process">How ordering works</Title>
         <div className="grid gap-4 md:grid-cols-3">
-          {reviews.map(([n, r, q], i) => (
-            <Reveal key={n} delay={i * 0.1}><div className={`${card} h-full`}><p className="text-amber-300">★★★★★</p><p className="mt-3 text-white/80">“{q}”</p><p className="mt-4 font-semibold">{n}</p><p className="text-sm text-white/50">{r}</p></div></Reveal>
+          {[['Fill the form', 'Topic, slides, language, type and deadline — optionally attach files.'], ['Send on WhatsApp', 'Your order is saved, then WhatsApp opens with all the details ready.'], ['We get to work', 'We follow up with you directly about your presentation.']].map(([t, d], n) => (
+            <Reveal key={t} delay={n * 0.1}><div className={`${card} h-full`}><span className={`${grad} bg-clip-text font-mono text-3xl font-black text-transparent`}>0{n + 1}</span><h3 className="mt-2 text-lg font-bold">{t}</h3><p className="mt-1 text-white/60">{d}</p></div></Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-5 py-16">
+        <Title k="FAQ">Common questions</Title>
+        <div className="space-y-3">
+          {[['What do I need to place an order?', 'Just the form: your name, WhatsApp number, topic, number of slides, language, type and deadline. Files and extra instructions are optional.'], ['Which languages are available?', 'English, French, Arabic and Italian.'], ['How do I discuss price and details?', 'After you submit, WhatsApp opens with your order so you can talk with us directly. You can also use the Contact page.'], ['Can I attach my own material?', 'Yes — upload a reference or requirements file (max 10 MB) on the order form.']].map(([q, a]) => (
+            <details key={q} className={`${card} group py-4`}><summary className="cursor-pointer list-none font-semibold marker:hidden">{q}<span className="float-right text-cyan-300 transition group-open:rotate-45">+</span></summary><p className="mt-3 text-white/60">{a}</p></details>
           ))}
         </div>
       </section>
