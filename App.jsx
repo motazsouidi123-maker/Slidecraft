@@ -6,12 +6,12 @@ import { WA, MAIL } from './supabase'
 import { useI18n } from './i18n'
 import { OrderDraftProvider } from './orderDraft'
 import Admin from './Admin'
-import Order from './components/OrderForm'
-import PortfolioGallery from './components/Portfolio'
-import Comparison from './components/Comparison'
-import Loader from './components/Loader'
-import { Calculator, PriceTable } from './components/Pricing'
-import { Arrow, Btn, Reveal, SectionHead, trk } from './components/common'
+import import Order from './OrderForm''
+import PortfolioGallery from './Portfolio'
+import Comparison from './Comparison'
+import Loader from './Loader'
+import { Calculator, PriceTable } from './Pricing'
+import { Arrow, Btn, Reveal, SectionHead, trk } from './common'
 
 // "k" is the stored order type value; labels come from the translation system.
 const services = [{ k: 'School' }, { k: 'University' }, { k: 'Business' }, { k: 'Creative' }]
