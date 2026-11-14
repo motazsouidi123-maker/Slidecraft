@@ -1,0 +1,49 @@
+@import "tailwindcss";
+@theme {
+  --color-ink: #060403; --color-bronze: #463828; --color-snow: #FDFDFD;
+  --color-silver: #C5BBB6; --color-stone: #645C58; --color-champ: #8C7B70;
+  --color-gold: #C08A52; --color-goldlight: #E9C99A;
+  /* Aliases so the Admin page (written with paper/navy/steel) uses the PRESORA palette */
+  --color-paper: #FDFDFD; --color-navy: #060403; --color-steel: #8C7B70;
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-arabic: "Noto Naskh Arabic", "Segoe UI", serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(900px 560px at 80% -8%, rgba(140,123,112,.20), transparent 60%),
+    radial-gradient(800px 520px at 0% 30%, rgba(70,56,40,.35), transparent 60%), #060403;
+  background-attachment: fixed; color: #FDFDFD; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+::selection { background: #8C7B70; color: #060403; }
+select option { background: #14100c; color: #fff; }
+.grain {
+  pointer-events: none; opacity: .13; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.bronze-text, .animgrad, .silver, .gold-text { background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shift 10s linear infinite; }
+.bronze-text, .animgrad { background-image: linear-gradient(100deg, #8C7B70, #E9C99A, #FDFDFD, #C08A52, #8C7B70); }
+.gold-text { background-image: linear-gradient(110deg, #8C5F34 0%, #E9C99A 30%, #C08A52 50%, #F3DDB8 70%, #8C5F34 100%); animation-duration: 8s; }
+.silver { background-image: linear-gradient(110deg, #645C58 0%, #FDFDFD 30%, #C5BBB6 50%, #FDFDFD 70%, #645C58 100%); animation-duration: 7s; }
+.gborder::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(197,187,182,.5), rgba(255,255,255,.04) 40%, rgba(140,123,112,.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+@keyframes shift { to { background-position: -300% 0; } }
+@keyframes float { 50% { transform: translateY(-14px); } }
+.float { animation: float 7s ease-in-out infinite; }
+@keyframes wheel { 0% { opacity: 0; transform: translateY(0); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(12px); } }
+.wheel { animation: wheel 1.8s ease-in-out infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+.marquee { animation: marquee 40s linear infinite; }
+.no-scrollbar { scrollbar-width: none; } .no-scrollbar::-webkit-scrollbar { display: none; }
+details > summary::-webkit-details-marker { display: none; }
+/* Keeps the unchanged Admin page on the PRESORA palette (it was written with other colour classes) */
+.from-violet-500 { --tw-gradient-from: #C5BBB6 !important; }
+.to-cyan-400 { --tw-gradient-to: #8C7B70 !important; }
+.bg-\[\#0d0a1f\]\/70 { background-color: rgba(12,9,7,.78) !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
