@@ -6,6 +6,9 @@
   --silver-soft: #e1e6ec;
   --white: #ffffff;
   --muted: #929ead;
+  --neon: #5b9dff;
+  --neon-line: rgba(91, 157, 255, 0.4);
+  --neon-glow: rgba(91, 157, 255, 0.16);
   --line: rgba(196, 204, 214, 0.16);
   --line-strong: rgba(196, 204, 214, 0.32);
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -87,16 +90,19 @@ p {
   font-size: 15px;
   font-weight: 600;
   line-height: 1;
-  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .btn-primary {
   background: var(--silver);
   color: var(--navy-950);
+  box-shadow: 0 0 0 1px var(--neon-glow), 0 0 12px var(--neon-glow);
 }
 
 .btn-primary:hover {
   background: var(--white);
+  box-shadow: 0 0 0 1px var(--neon-line), 0 0 16px var(--neon-glow);
 }
 
 .btn-ghost {
@@ -106,8 +112,14 @@ p {
 }
 
 .btn-ghost:hover {
-  border-color: var(--silver);
-  background: rgba(196, 204, 214, 0.08);
+  border-color: var(--neon-line);
+  background: rgba(91, 157, 255, 0.06);
+  box-shadow: 0 0 12px var(--neon-glow);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--neon-line);
 }
 
 .btn[disabled] {
@@ -121,11 +133,12 @@ p {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 28px;
-  transition: border-color 0.25s ease, background-color 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
-  border-color: var(--line-strong);
+  border-color: var(--neon-line);
+  box-shadow: 0 0 14px var(--neon-glow);
 }
 
 /* ---------- Sections ---------- */
@@ -189,6 +202,12 @@ p {
   font-family: var(--font-display);
   font-weight: 600;
   color: var(--silver);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.logo:hover .logo-mark {
+  border-color: var(--neon);
+  box-shadow: 0 0 10px var(--neon-glow);
 }
 
 .logo-text {
@@ -207,10 +226,14 @@ p {
 .nav-links a {
   font-size: 14px;
   color: var(--muted);
-  transition: color 0.25s ease;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
 }
 
-.nav-links a:hover,
+.nav-links a:hover {
+  color: var(--white);
+  text-shadow: 0 0 10px var(--neon-glow);
+}
+
 .nav-links a.active {
   color: var(--white);
 }
@@ -223,6 +246,12 @@ p {
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 14px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.nav-toggle:hover {
+  border-color: var(--neon-line);
+  box-shadow: 0 0 10px var(--neon-glow);
 }
 
 /* ---------- Hero ---------- */
@@ -259,9 +288,10 @@ p {
 
 .hero-panel {
   background: rgba(41, 61, 86, 0.28);
-  border: 1px solid var(--line);
+  border: 1px solid var(--neon-line);
   border-radius: var(--radius);
   padding: 32px;
+  box-shadow: 0 0 18px var(--neon-glow);
 }
 
 .panel-label {
@@ -342,9 +372,10 @@ p {
 .cta-band {
   text-align: center;
   background: rgba(41, 61, 86, 0.28);
-  border: 1px solid var(--line);
+  border: 1px solid var(--neon-line);
   border-radius: var(--radius);
   padding: 56px 24px;
+  box-shadow: 0 0 18px var(--neon-glow);
 }
 
 .cta-band h2 {
@@ -387,7 +418,7 @@ p {
 .calc-result {
   margin-top: 18px;
   padding: 18px 20px;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--neon-line);
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
@@ -436,7 +467,7 @@ textarea {
   padding: 12px 14px;
   font-family: inherit;
   font-size: 16px;
-  transition: border-color 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 input::placeholder,
@@ -448,7 +479,8 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--silver);
+  border-color: var(--neon);
+  box-shadow: 0 0 0 3px var(--neon-glow);
 }
 
 textarea {
@@ -486,6 +518,7 @@ input[type='file'] {
 .success-box {
   background: rgba(196, 204, 214, 0.08);
   color: var(--silver-soft);
+  border-color: var(--neon-line);
 }
 
 .summary {
@@ -494,7 +527,7 @@ input[type='file'] {
   align-items: baseline;
   flex-wrap: wrap;
   gap: 10px;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--neon-line);
   border-radius: 12px;
   padding: 16px 18px;
 }
@@ -573,13 +606,20 @@ input[type='file'] {
   border-radius: 999px;
   padding: 8px 16px;
   font-size: 13px;
-  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.filters button:hover {
+  border-color: var(--neon-line);
+  color: var(--silver-soft);
 }
 
 .filters button.active {
   color: var(--navy-950);
   background: var(--silver);
   border-color: var(--silver);
+  box-shadow: 0 0 10px var(--neon-glow);
 }
 
 .order-list {
@@ -591,6 +631,11 @@ input[type='file'] {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: rgba(41, 61, 86, 0.28);
+  transition: border-color 0.25s ease;
+}
+
+.order-card:hover {
+  border-color: var(--neon-line);
 }
 
 .order-head {
@@ -632,6 +677,12 @@ input[type='file'] {
 .order-body a.link {
   color: var(--silver-soft);
   border-bottom: 1px solid var(--line-strong);
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.order-body a.link:hover {
+  color: var(--neon);
+  border-color: var(--neon-line);
 }
 
 .badge {
@@ -650,6 +701,7 @@ input[type='file'] {
 .badge-in_progress {
   color: var(--silver-soft);
   background: rgba(41, 61, 86, 0.6);
+  border-color: var(--neon-line);
 }
 
 .badge-completed {
@@ -689,11 +741,12 @@ input[type='file'] {
 
 .footer ul a {
   color: var(--silver);
-  transition: color 0.25s ease;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
 }
 
 .footer ul a:hover {
   color: var(--white);
+  text-shadow: 0 0 10px var(--neon-glow);
 }
 
 .footer-note {
@@ -702,6 +755,24 @@ input[type='file'] {
   border-top: 1px solid var(--line);
   font-size: 13px;
   color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.signature {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.signature b {
+  color: var(--neon);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 8px rgba(91, 157, 255, 0.5);
 }
 
 /* ---------- Responsive ---------- */
