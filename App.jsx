@@ -159,12 +159,7 @@ function Home() {
       </section>
       <Sep />
 
-      <section id="showcase" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-28">
-        <Head k="Design showcase">Sample <em className="bronze-text">styles</em></Head>
-        <p className="-mt-6 mb-8 max-w-xl text-sm text-silver/60">Fictional sample designs that show our range of styles — not actual client projects. Filter by type and open any design to browse.</p>
-        <Reveal><Portfolio /></Reveal>
-      </section>
-      <Sep />
+  
 
       <section className="mx-auto grid max-w-6xl gap-12 px-5 py-28 lg:grid-cols-[.8fr_1.2fr]">
         <div className="lg:sticky lg:top-32 lg:self-start">
