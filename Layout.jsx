@@ -88,7 +88,10 @@ export default function Layout() {
             </div>
           </div>
           <div className="footer-note">
-            © {new Date().getFullYear()} PRESORA. All rights reserved.
+            <span>© {new Date().getFullYear()} PRESORA. All rights reserved.</span>
+            <span className="signature">
+              Created by <b>M.S.</b>
+            </span>
           </div>
         </div>
       </footer>
