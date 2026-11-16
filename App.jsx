@@ -3,7 +3,7 @@ import { HashRouter, Routes, Route, Link, NavLink, useLocation } from 'react-rou
 import { motion, AnimatePresence, MotionConfig, useScroll, useSpring, useTransform, useMotionValue, useReducedMotion, animate } from 'framer-motion'
 import { supabase, WA, MAIL } from './supabase'
 import Admin from './Admin'
-import Portfolio from './Portfolio'
+
 import { I18nProvider } from './i18n'
 import { Magnetic, Wordmark, Signature, Loader, ScrollProgress, Cursor, HeroVisual, Marquee, BentoCard } from './ui'
 
