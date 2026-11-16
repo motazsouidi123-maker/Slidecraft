@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@theme {
+  --color-ink: #0B0B0B;
+  --color-char: #171512;
+  --color-bronze: #C08A52;
+  --color-gold: #C08A52;
+  --color-goldlight: #E9C99A;
+  --color-snow: #F5F1EA;
+  --color-mute: #8F867B;
+  /* Names used by the unchanged Admin page */
+  --color-paper: #F5F1EA;
+  --color-navy: #171512;
+  --color-steel: #C08A52;
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-arabic: "Noto Naskh Arabic", "Segoe UI", serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(900px 560px at 80% -8%, rgba(192,138,82,.12), transparent 60%),
+    radial-gradient(800px 520px at 0% 30%, rgba(23,21,18,.9), transparent 60%), #0B0B0B;
+  background-attachment: fixed; color: #F5F1EA; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+::selection { background: #C08A52; color: #0B0B0B; }
+select option { background: #171512; color: #F5F1EA; }
+.grain {
+  pointer-events: none; opacity: .10; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.bronze-text, .gold-text { background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shift 12s linear infinite; }
+.bronze-text { background-image: linear-gradient(100deg, #C08A52, #E9C99A, #F5F1EA, #E9C99A, #C08A52); }
+.gold-text { background-image: linear-gradient(110deg, #C08A52 0%, #E9C99A 35%, #F5F1EA 50%, #E9C99A 65%, #C08A52 100%); animation-duration: 8s; }
+.gborder::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(233,201,154,.45), rgba(245,241,234,.04) 40%, rgba(192,138,82,.45));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+@keyframes shift { to { background-position: -300% 0; } }
+@keyframes float { 50% { transform: translateY(-10px); } }
+.float { animation: float 8s ease-in-out infinite; }
+@keyframes wheel { 0% { opacity: 0; transform: translateY(0); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(12px); } }
+.wheel { animation: wheel 2s ease-in-out infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+.marquee { animation: marquee 45s linear infinite; }
+.no-scrollbar { scrollbar-width: none; } .no-scrollbar::-webkit-scrollbar { display: none; }
+details > summary::-webkit-details-marker { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
