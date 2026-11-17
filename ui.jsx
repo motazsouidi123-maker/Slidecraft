@@ -233,11 +233,22 @@ export function GalleryGrid({ items = GALLERY_ITEMS }) {
   )
 }
 
-/* ---------- Welcome intro (Ice White, shown before the site) ---------- */
+/* ---------- Welcome intro (Ice White, shown before the site) ----------
+   المدة الإجمالية 5 ثوانٍ بما فيها الـ Fade Out:
+   الخروج يبدأ عند 4.5 ثانية ويستغرق 0.5 ثانية.
+   تأكد أن FADE_OUT_MS يطابق مدة الانتقال المستخدمة في index.css.
+------------------------------------------------------------------- */
+const INTRO_TOTAL_MS = 5000
+const FADE_OUT_MS = 500
+const REDUCED_SHOW_MS = 900
+const REDUCED_FADE_MS = 80
+
 export function Intro({ onDone }) {
   const [leaving, setLeaving] = useState(false)
   const timers = useRef([])
   const finished = useRef(false)
+  const leavingRef = useRef(false)
+  const reduceRef = useRef(false)
 
   function finish() {
     if (finished.current) return
@@ -247,23 +258,26 @@ export function Intro({ onDone }) {
   }
 
   function leave() {
+    if (leavingRef.current) return
+    leavingRef.current = true
     timers.current.forEach(clearTimeout)
     timers.current = []
     setLeaving(true)
-    timers.current.push(setTimeout(finish, 450))
+    timers.current.push(setTimeout(finish, reduceRef.current ? REDUCED_FADE_MS : FADE_OUT_MS))
   }
 
   useEffect(() => {
     document.body.classList.add('intro-lock')
-    let reduce = false
     try {
-      reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      reduceRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     } catch (e) {
-      reduce = false
+      reduceRef.current = false
     }
-    timers.current.push(setTimeout(leave, reduce ? 700 : 1800))
+    const showMs = reduceRef.current ? REDUCED_SHOW_MS : INTRO_TOTAL_MS - FADE_OUT_MS
+    timers.current.push(setTimeout(leave, showMs))
     return () => {
       timers.current.forEach(clearTimeout)
+      timers.current = []
       document.body.classList.remove('intro-lock')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -272,6 +286,7 @@ export function Intro({ onDone }) {
   return (
     <div
       className={`intro ${leaving ? 'leaving' : ''}`.trim()}
+      style={{ transitionDuration: `${FADE_OUT_MS}ms` }}
       role="dialog"
       aria-label="Welcome to PRESORA"
     >
@@ -293,4 +308,4 @@ export function Intro({ onDone }) {
       </button>
     </div>
   )
-                }
+}
