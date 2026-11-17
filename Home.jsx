@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Card, Section } from './ui.jsx'
+import { Button, Card, Field, Section } from './ui.jsx'
 import { SERVICES } from './Services.jsx'
 
 const STEPS = [
@@ -423,6 +423,302 @@ function Versus() {
   )
 }
 
+/* ---------- Visual Playground ---------- */
+const PG_TYPES = [
+  { id: 'serif', label: 'Serif' },
+  { id: 'sans', label: 'Sans' },
+  { id: 'caps', label: 'Caps' },
+  { id: 'mixed', label: 'Mixed' },
+]
+
+const PG_ALIGNS = [
+  { id: 'left', label: 'Left' },
+  { id: 'center', label: 'Center' },
+  { id: 'right', label: 'Right' },
+]
+
+const PG_WEIGHTS = [
+  { id: 400, label: 'Regular' },
+  { id: 500, label: 'Medium' },
+  { id: 600, label: 'Semibold' },
+]
+
+const PG_SIZES = [
+  { id: 's', label: 'Small' },
+  { id: 'm', label: 'Medium' },
+  { id: 'l', label: 'Large' },
+]
+
+const PG_LAYOUTS = [
+  { id: 'centered', label: 'Centered' },
+  { id: 'editorial', label: 'Editorial' },
+  { id: 'asymmetric', label: 'Asymmetric' },
+  { id: 'minimal', label: 'Minimal' },
+]
+
+const PG_PALETTES = [
+  { id: 'midnight', label: 'Midnight', bg: '#101B2D', fg: '#FFFFFF', accent: '#5B9DFF', muted: '#929EAD' },
+  { id: 'silver', label: 'Silver', bg: '#E1E6EC', fg: '#101B2D', accent: '#293D56', muted: '#293D56' },
+  { id: 'steel', label: 'Steel', bg: '#293D56', fg: '#FFFFFF', accent: '#C4CCD6', muted: '#C4CCD6' },
+  { id: 'neon', label: 'Neon', bg: '#5B9DFF', fg: '#101B2D', accent: '#FFFFFF', muted: '#17263D' },
+]
+
+const PG_BACKGROUNDS = [
+  { id: 'plain', label: 'Plain' },
+  { id: 'gradient', label: 'Gradient' },
+  { id: 'grid', label: 'Grid' },
+  { id: 'frame', label: 'Frame' },
+]
+
+const PG_SHAPES = [
+  { id: 'none', label: 'None' },
+  { id: 'line', label: 'Line' },
+  { id: 'ring', label: 'Ring' },
+  { id: 'bars', label: 'Bars' },
+]
+
+const PG_PRESETS = [
+  {
+    id: 'minimal',
+    label: 'Minimal',
+    note: 'Less, but better.',
+    cfg: { type: 'sans', align: 'left', weight: 400, size: 'm', layout: 'minimal', palette: 'silver', bg: 'plain', shape: 'line' },
+  },
+  {
+    id: 'editorial',
+    label: 'Editorial',
+    note: 'A story told in type.',
+    cfg: { type: 'serif', align: 'left', weight: 500, size: 'l', layout: 'editorial', palette: 'midnight', bg: 'frame', shape: 'line' },
+  },
+  {
+    id: 'corporate',
+    label: 'Corporate',
+    note: 'Clarity is a design decision.',
+    cfg: { type: 'mixed', align: 'left', weight: 600, size: 'm', layout: 'asymmetric', palette: 'steel', bg: 'grid', shape: 'bars' },
+  },
+  {
+    id: 'bold',
+    label: 'Bold',
+    note: 'Confidence, made visible.',
+    cfg: { type: 'caps', align: 'center', weight: 600, size: 'l', layout: 'centered', palette: 'neon', bg: 'gradient', shape: 'ring' },
+  },
+]
+
+const PG_LABS = [
+  { id: 'directions', label: 'Directions', line: 'Four starting points. Each one is a different point of view.' },
+  { id: 'typography', label: 'Typography', line: 'Every detail has a purpose.' },
+  { id: 'composition', label: 'Composition', line: 'One idea. Different perspectives.' },
+  { id: 'color', label: 'Color', line: 'Good design makes ideas feel different.' },
+  { id: 'elements', label: 'Elements', line: 'Small marks. A big difference.' },
+]
+
+const PG_DEFAULT_TITLE = 'Design is an experience'
+
+function Choice({ label, value, options, onChange }) {
+  return (
+    <div className="pg-group">
+      <span className="pg-label">{label}</span>
+      <div className="pg-options" role="group" aria-label={label}>
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            className={o.id === value ? 'active' : ''}
+            aria-pressed={o.id === value}
+            onClick={() => onChange(o.id)}
+          >
+            {o.bg && (
+              <i className="pg-swatch" style={{ background: o.bg }} aria-hidden="true">
+                <b style={{ background: o.accent }} />
+              </i>
+            )}
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function Playground() {
+  const [cfg, setCfg] = useState(PG_PRESETS[1].cfg)
+  const [presetId, setPresetId] = useState(PG_PRESETS[1].id)
+  const [lab, setLab] = useState('directions')
+  const [headline, setHeadline] = useState('')
+
+  const preset = PG_PRESETS.find((p) => p.id === presetId)
+  const pal = PG_PALETTES.find((p) => p.id === cfg.palette) || PG_PALETTES[0]
+  const activeLab = PG_LABS.find((l) => l.id === lab) || PG_LABS[0]
+  const title = headline.trim() || PG_DEFAULT_TITLE
+  const sub = preset ? preset.note : 'Your direction. Our craft.'
+
+  function applyPreset(p) {
+    setCfg(p.cfg)
+    setPresetId(p.id)
+  }
+
+  function update(key, value) {
+    setCfg((c) => ({ ...c, [key]: value }))
+    setPresetId(null)
+  }
+
+  function pick(list) {
+    return list[Math.floor(Math.random() * list.length)].id
+  }
+
+  function surprise() {
+    setCfg({
+      type: pick(PG_TYPES),
+      align: pick(PG_ALIGNS),
+      weight: pick(PG_WEIGHTS),
+      size: pick(PG_SIZES),
+      layout: pick(PG_LAYOUTS),
+      palette: pick(PG_PALETTES),
+      bg: pick(PG_BACKGROUNDS),
+      shape: pick(PG_SHAPES),
+    })
+    setPresetId(null)
+  }
+
+  function reset() {
+    applyPreset(PG_PRESETS[1])
+    setHeadline('')
+  }
+
+  const canvasStyle = {
+    '--pg-bg': pal.bg,
+    '--pg-fg': pal.fg,
+    '--pg-accent': pal.accent,
+    '--pg-muted': pal.muted,
+    '--pg-weight': cfg.weight,
+  }
+
+  function renderPanel() {
+    switch (lab) {
+      case 'typography':
+        return (
+          <>
+            <Choice label="Typeface" value={cfg.type} options={PG_TYPES} onChange={(v) => update('type', v)} />
+            <Choice label="Alignment" value={cfg.align} options={PG_ALIGNS} onChange={(v) => update('align', v)} />
+            <Choice label="Weight" value={cfg.weight} options={PG_WEIGHTS} onChange={(v) => update('weight', v)} />
+            <Choice label="Size" value={cfg.size} options={PG_SIZES} onChange={(v) => update('size', v)} />
+            <Field label="Your headline" hint="Try your own words.">
+              <input
+                value={headline}
+                maxLength={48}
+                placeholder={PG_DEFAULT_TITLE}
+                onChange={(e) => setHeadline(e.target.value)}
+              />
+            </Field>
+          </>
+        )
+      case 'composition':
+        return (
+          <Choice label="Layout" value={cfg.layout} options={PG_LAYOUTS} onChange={(v) => update('layout', v)} />
+        )
+      case 'color':
+        return (
+          <Choice label="Palette" value={cfg.palette} options={PG_PALETTES} onChange={(v) => update('palette', v)} />
+        )
+      case 'elements':
+        return (
+          <>
+            <Choice label="Background" value={cfg.bg} options={PG_BACKGROUNDS} onChange={(v) => update('bg', v)} />
+            <Choice label="Shape" value={cfg.shape} options={PG_SHAPES} onChange={(v) => update('shape', v)} />
+          </>
+        )
+      default:
+        return (
+          <div className="pg-presets">
+            {PG_PRESETS.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={p.id === presetId ? 'active' : ''}
+                aria-pressed={p.id === presetId}
+                onClick={() => applyPreset(p)}
+              >
+                <strong>{p.label}</strong>
+                <span>{p.note}</span>
+              </button>
+            ))}
+          </div>
+        )
+    }
+  }
+
+  return (
+    <Section
+      id="playground"
+      eyebrow="Visual Playground"
+      title="Design isn't just something you see. It's something you experience."
+      intro="Experiment with type, composition and color. Every change happens live on the canvas."
+    >
+      <div className="pg">
+        <div className="pg-stage-col">
+          <div
+            className={`pg-canvas pg-type-${cfg.type} pg-align-${cfg.align} pg-size-${cfg.size} pg-layout-${cfg.layout}`}
+            style={canvasStyle}
+            role="group"
+            aria-label="Live design canvas"
+          >
+            <div className={`pg-bg pg-bg-${cfg.bg}`} key={`bg-${cfg.bg}`} aria-hidden="true" />
+            {cfg.shape !== 'none' && (
+              <div className={`pg-shape pg-shape-${cfg.shape}`} key={`shape-${cfg.shape}`} aria-hidden="true">
+                {cfg.shape === 'bars' && (
+                  <>
+                    <i />
+                    <i />
+                    <i />
+                  </>
+                )}
+              </div>
+            )}
+            <div className="pg-content fade-swap" key={`${cfg.layout}-${cfg.type}`}>
+              <span className="pg-kicker">PRESORA · VISUAL PLAYGROUND</span>
+              <div className="pg-title">{title}</div>
+              <p className="pg-sub">{sub}</p>
+            </div>
+          </div>
+          <div className="pg-caption">
+            <span>Direction: {preset ? preset.label : 'Custom'}</span>
+            <span>{pal.label} palette</span>
+          </div>
+        </div>
+
+        <div className="pg-panel">
+          <div className="pg-tabs" role="tablist" aria-label="Playground labs">
+            {PG_LABS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                role="tab"
+                aria-selected={l.id === lab}
+                className={l.id === lab ? 'active' : ''}
+                onClick={() => setLab(l.id)}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+          <p className="pg-line">{activeLab.line}</p>
+          <div className="pg-controls" role="tabpanel">
+            {renderPanel()}
+          </div>
+          <div className="pg-actions">
+            <Button variant="ghost" onClick={surprise}>
+              Surprise me
+            </Button>
+            <Button variant="ghost" onClick={reset}>
+              Reset
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
 export default function Home() {
   return (
     <>
@@ -473,6 +769,8 @@ export default function Home() {
       <Showcase />
 
       <Versus />
+
+      <Playground />
 
       <Section eyebrow="Process" title="How it works">
         <div className="grid grid-3">
