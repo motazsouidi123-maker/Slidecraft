@@ -650,7 +650,9 @@ input[type='file'] {
 
 .filters button,
 .showcase-tabs button,
-.compare-toggle button {
+.compare-toggle button,
+.pg-tabs button,
+.pg-options button {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--line-strong);
@@ -663,14 +665,18 @@ input[type='file'] {
 
 .filters button:hover,
 .showcase-tabs button:hover,
-.compare-toggle button:hover {
+.compare-toggle button:hover,
+.pg-tabs button:hover,
+.pg-options button:hover {
   border-color: var(--neon-line);
   color: var(--silver-soft);
 }
 
 .filters button.active,
 .showcase-tabs button.active,
-.compare-toggle button.active {
+.compare-toggle button.active,
+.pg-tabs button.active,
+.pg-options button.active {
   color: var(--navy-950);
   background: var(--silver);
   border-color: var(--silver);
@@ -987,7 +993,10 @@ input[type='file'] {
   box-shadow: 0 0 12px var(--neon-glow);
 }
 
-/* Slide (16:9). 1 unit = 1% of the slide width. */
+/* Slide (16:9).
+   --u = 1% of the slide width. The slide itself is the query container, so
+   its own padding uses percentages (cqw would resolve against the viewport
+   on the container element itself). Children use --u safely. */
 .slide {
   --u: min(0.8vw, 8px);
   position: relative;
@@ -997,7 +1006,7 @@ input[type='file'] {
   aspect-ratio: 16 / 9;
   container-type: inline-size;
   overflow: hidden;
-  padding: calc(var(--u) * 4.5);
+  padding: 4.5%;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   background: radial-gradient(ellipse at 90% 0%, rgba(91, 157, 255, 0.16), transparent 55%),
@@ -1198,7 +1207,7 @@ input[type='file'] {
   background: #ffffff;
   border-color: #d5d9de;
   color: #333333;
-  padding: calc(var(--u) * 4);
+  padding: 4%;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -1214,6 +1223,427 @@ input[type='file'] {
   font-size: max(8px, calc(var(--u) * 1.7));
   line-height: 1.35;
   color: #444444;
+}
+
+/* ---------- Visual Playground ---------- */
+.pg {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.pg-stage-col {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Canvas (16:9). The canvas is the query container; its own box uses no cqw.
+   --u = 1% of the canvas width for everything inside it. */
+.pg-canvas {
+  --u: min(0.8vw, 8px);
+  --pg-t: max(15px, calc(var(--u) * 6.4));
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background-color: var(--pg-bg);
+  color: var(--pg-fg);
+  box-shadow: 0 0 26px rgba(91, 157, 255, 0.14);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+@supports (width: 1cqw) {
+  .pg-canvas {
+    --u: 1cqw;
+  }
+}
+
+/* Title size (the final size is computed on the title itself) */
+.pg-size-s {
+  --pg-t: max(14px, calc(var(--u) * 4.6));
+}
+
+.pg-size-m {
+  --pg-t: max(15px, calc(var(--u) * 6.4));
+}
+
+.pg-size-l {
+  --pg-t: max(17px, calc(var(--u) * 8.6));
+}
+
+/* Background variations */
+.pg-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  animation: pg-fade-in 0.45s ease both;
+}
+
+.pg-bg-gradient {
+  background: radial-gradient(ellipse at 90% 0%, var(--pg-accent), transparent 62%);
+  opacity: 0.4;
+}
+
+.pg-bg-grid {
+  background-image: linear-gradient(var(--pg-muted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pg-muted) 1px, transparent 1px);
+  background-size: calc(var(--u) * 6) calc(var(--u) * 6);
+  opacity: 0.18;
+}
+
+.pg-bg-frame {
+  inset: calc(var(--u) * 2.2);
+  border: 1px solid var(--pg-accent);
+  opacity: 0.55;
+}
+
+@keyframes pg-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Decorative shapes */
+.pg-shape {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  animation: pg-fade-in 0.45s ease both;
+}
+
+.pg-shape-line {
+  top: calc(var(--u) * 6);
+  right: calc(var(--u) * 5);
+  width: calc(var(--u) * 12);
+  height: max(1px, calc(var(--u) * 0.25));
+  background: var(--pg-accent);
+}
+
+.pg-shape-ring {
+  right: calc(var(--u) * -6);
+  bottom: calc(var(--u) * -9);
+  width: calc(var(--u) * 26);
+  height: calc(var(--u) * 26);
+  border: 1px solid var(--pg-accent);
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.pg-shape-bars {
+  top: calc(var(--u) * 5);
+  right: calc(var(--u) * 5);
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--u) * 1.2);
+}
+
+.pg-shape-bars i {
+  display: block;
+  width: calc(var(--u) * 1.6);
+  background: var(--pg-accent);
+}
+
+.pg-shape-bars i:nth-child(1) {
+  height: calc(var(--u) * 5);
+}
+
+.pg-shape-bars i:nth-child(2) {
+  height: calc(var(--u) * 8);
+}
+
+.pg-shape-bars i:nth-child(3) {
+  height: calc(var(--u) * 11);
+}
+
+/* Content */
+.pg-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 1.6);
+  padding: calc(var(--u) * 5);
+}
+
+.pg-kicker {
+  font-family: var(--font-body);
+  font-size: max(8px, calc(var(--u) * 1.5));
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pg-accent);
+  transition: color 0.4s ease;
+}
+
+.pg-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  max-width: 100%;
+  padding-bottom: 0.1em;
+  overflow-wrap: anywhere;
+  font-family: var(--font-display);
+  font-weight: var(--pg-weight, 500);
+  font-size: calc(var(--pg-t) * var(--pg-k, 1) * var(--pg-c, 1));
+  line-height: 1.12;
+  color: var(--pg-fg);
+  transition: color 0.4s ease;
+}
+
+.pg-sub {
+  font-size: max(10px, calc(var(--u) * 2));
+  color: var(--pg-muted);
+  transition: color 0.4s ease;
+}
+
+/* Typography treatments */
+.pg-type-serif .pg-title {
+  font-family: var(--font-display);
+}
+
+.pg-type-sans .pg-title {
+  font-family: var(--font-body);
+  letter-spacing: -0.01em;
+}
+
+.pg-type-caps .pg-title {
+  --pg-c: 0.8;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+.pg-type-mixed .pg-title {
+  font-family: var(--font-display);
+}
+
+.pg-type-mixed .pg-kicker {
+  font-family: var(--font-display);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-size: max(10px, calc(var(--u) * 2));
+}
+
+/* Alignment */
+.pg-align-left .pg-content {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.pg-align-center .pg-content {
+  align-items: center;
+  text-align: center;
+}
+
+.pg-align-right .pg-content {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* Compositions */
+.pg-layout-centered .pg-content {
+  justify-content: center;
+}
+
+.pg-layout-editorial .pg-content {
+  justify-content: flex-end;
+  gap: calc(var(--u) * 1.4);
+}
+
+.pg-layout-editorial .pg-kicker {
+  margin-bottom: auto;
+}
+
+.pg-layout-editorial .pg-title {
+  --pg-k: 1.08;
+}
+
+.pg-layout-asymmetric .pg-content {
+  justify-content: center;
+}
+
+.pg-layout-asymmetric .pg-title {
+  max-width: 62%;
+}
+
+.pg-layout-asymmetric .pg-kicker {
+  align-self: flex-start;
+}
+
+.pg-layout-asymmetric .pg-sub {
+  align-self: flex-end;
+  max-width: 42%;
+  margin-top: calc(var(--u) * 3);
+  text-align: right;
+}
+
+.pg-layout-minimal .pg-content {
+  justify-content: flex-end;
+  gap: calc(var(--u) * 1);
+}
+
+.pg-layout-minimal .pg-kicker {
+  margin-bottom: auto;
+}
+
+.pg-layout-minimal .pg-title {
+  --pg-k: 0.78;
+}
+
+/* Caption + panel */
+.pg-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pg-panel {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(41, 61, 86, 0.22);
+}
+
+.pg-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pg-tabs button,
+.pg-options button {
+  min-height: 40px;
+}
+
+.pg-tabs button {
+  font-size: 12px;
+  padding: 8px 14px;
+}
+
+.pg-line {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--silver);
+}
+
+.pg-controls {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.pg-group {
+  display: grid;
+  gap: 8px;
+}
+
+.pg-label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pg-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pg-options button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pg-swatch {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.pg-swatch b {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.pg-presets {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.pg-presets button {
+  display: grid;
+  gap: 4px;
+  min-height: 64px;
+  padding: 12px 14px;
+  text-align: left;
+  background: transparent;
+  color: var(--silver-soft);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.pg-presets button strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.pg-presets button span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pg-presets button:hover {
+  border-color: var(--neon-line);
+  box-shadow: 0 0 14px rgba(91, 157, 255, 0.14);
+}
+
+.pg-presets button.active {
+  border-color: var(--neon);
+  background: rgba(91, 157, 255, 0.1);
+  box-shadow: 0 0 14px var(--neon-glow);
+}
+
+.pg-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pg-actions .btn {
+  padding: 10px 18px;
+  font-size: 14px;
 }
 
 /* ---------- Extra UI components (ui.jsx) ---------- */
@@ -1524,7 +1954,8 @@ input[type='file'] {
   .grid-2,
   .grid-3,
   .footer-grid,
-  .versus {
+  .versus,
+  .pg {
     grid-template-columns: 1fr;
   }
 
@@ -1614,6 +2045,18 @@ input[type='file'] {
 
   .step.active .step-label {
     display: inline;
+  }
+
+  .pg-panel {
+    padding: 14px;
+  }
+
+  .pg-actions .btn {
+    flex: 1;
+  }
+
+  .pg-caption {
+    font-size: 11px;
   }
 }
 
