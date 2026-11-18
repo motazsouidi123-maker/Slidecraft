@@ -12,7 +12,7 @@ function ScrollToTop() {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }, [pathname])
 
   return null
@@ -20,50 +20,64 @@ function ScrollToTop() {
 
 function CinematicIntro({ onDone }) {
   const [progress, setProgress] = useState(0)
+  const [leaving, setLeaving] = useState(false)
 
   useEffect(() => {
-    const duration = 8500
     const start = Date.now()
+    const duration = 8500
 
-    const interval = setInterval(() => {
-      const value = Math.min(100, ((Date.now() - start) / duration) * 100)
+    const timer = window.setInterval(() => {
+      const elapsed = Date.now() - start
+      const value = Math.min(100, (elapsed / duration) * 100)
+
       setProgress(value)
+
+      if (value >= 100) {
+        window.clearInterval(timer)
+        setLeaving(true)
+        window.setTimeout(onDone, 1100)
+      }
     }, 40)
 
-    const timer = setTimeout(onDone, duration)
-
-    return () => {
-      clearInterval(interval)
-      clearTimeout(timer)
-    }
+    return () => window.clearInterval(timer)
   }, [onDone])
 
   return (
-    <div className="presora-cinema">
+    <div className={`presora-cinema ${leaving ? 'cinema-leaving' : ''}`}>
       <style>{`
         .presora-cinema {
           position: fixed;
           inset: 0;
           z-index: 999999;
           overflow: hidden;
-          display: grid;
-          place-items: center;
-          background: #050a12;
-          color: white;
-          perspective: 900px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #030405;
+          color: #fff;
           isolation: isolate;
-          animation: cinema-exit 1.1s cubic-bezier(.7,0,.2,1) 7.4s forwards;
+          font-family: inherit;
         }
 
         .presora-cinema::before {
           content: "";
           position: absolute;
-          inset: -30%;
+          inset: -35%;
           z-index: -2;
           background:
-            radial-gradient(ellipse at 50% 45%, rgba(65,115,165,.42), transparent 45%),
-            radial-gradient(ellipse at 50% 100%, rgba(20,45,75,.6), transparent 55%);
+            radial-gradient(ellipse at 50% 45%, rgba(210,220,235,.17), transparent 35%),
+            radial-gradient(ellipse at 15% 75%, rgba(145,160,180,.10), transparent 38%),
+            radial-gradient(ellipse at 85% 18%, rgba(220,225,235,.09), transparent 34%);
           animation: cinema-atmosphere 8s ease-in-out infinite alternate;
+        }
+
+        .presora-cinema::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 5;
+          pointer-events: none;
+          background: radial-gradient(ellipse, transparent 35%, rgba(0,0,0,.75) 100%);
         }
 
         .cinema-grid {
@@ -72,197 +86,222 @@ function CinematicIntro({ onDone }) {
           z-index: -1;
           opacity: .12;
           background-image:
-            linear-gradient(rgba(160,200,235,.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(160,200,235,.2) 1px, transparent 1px);
+            linear-gradient(rgba(210,220,235,.13) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(210,220,235,.13) 1px, transparent 1px);
           background-size: 75px 75px;
-          transform: perspective(500px) rotateX(62deg) scale(1.7);
-          animation: cinema-grid-move 8s linear infinite;
+          transform: perspective(600px) rotateX(58deg) scale(1.8);
+          animation: cinema-grid-move 12s linear infinite;
         }
 
-        .cinema-camera {
+        .cinema-light {
           position: absolute;
           inset: 0;
-          display: grid;
-          place-items: center;
-          transform-style: preserve-3d;
-          animation: camera-flight 8s cubic-bezier(.4,0,.2,1) both;
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(
+            115deg,
+            transparent 25%,
+            rgba(225,235,250,.10) 48%,
+            transparent 70%
+          );
+          transform: translateX(-120%);
+          animation: silver-sweep 5s ease-in-out infinite;
+        }
+
+        .cinema-content {
+          position: relative;
+          z-index: 3;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          perspective: 1100px;
+          overflow: hidden;
         }
 
         .cinema-word {
           position: absolute;
-          width: 120%;
-          text-align: center;
+          margin: 0;
           white-space: nowrap;
-          font-size: clamp(70px, 17vw, 210px);
-          line-height: 1;
-          font-weight: 950;
+          text-align: center;
+          font-size: clamp(3.8rem, 14vw, 12rem);
+          line-height: .9;
           letter-spacing: -.075em;
-          opacity: 0;
-          color: transparent;
-          background: linear-gradient(180deg, #fff 5%, #c5e2ff 50%, #5684b2 100%);
-          background-clip: text;
+          font-weight: 950;
+          background: linear-gradient(
+            180deg,
+            #ffffff 4%,
+            #d8dce2 42%,
+            #858c96 75%,
+            #f4f5f7 100%
+          );
           -webkit-background-clip: text;
-          text-shadow: 0 0 60px rgba(120,180,235,.18);
-          transform-style: preserve-3d;
-          animation: word-through-camera 2s cubic-bezier(.15,.75,.2,1) both;
+          background-clip: text;
+          color: transparent;
+          filter: drop-shadow(0 10px 45px rgba(210,225,245,.15));
+          opacity: 0;
+          transform: translateZ(-1000px) scale(.2);
+          animation: cinema-word-arrive 1.65s cubic-bezier(.12,.75,.18,1) both;
         }
 
-        .cinema-word.w1 { animation-delay: .1s; }
-        .cinema-word.w2 { animation-delay: 1.45s; }
-        .cinema-word.w3 { animation-delay: 2.8s; }
-        .cinema-word.w4 {
-          animation-delay: 4.15s;
-          font-size: clamp(48px, 12vw, 145px);
-          letter-spacing: -.04em;
+        .cinema-word.one {
+          animation-delay: .25s;
         }
 
-        .cinema-word.brand {
-          animation: brand-arrival 2s cubic-bezier(.16,1,.3,1) 5.3s both;
-          font-size: clamp(45px, 12vw, 145px);
+        .cinema-word.two {
+          animation-delay: 1.8s;
+        }
+
+        .cinema-word.three {
+          animation-delay: 3.35s;
+        }
+
+        .cinema-word.four {
+          animation-delay: 4.9s;
+          font-size: clamp(3.2rem, 11vw, 9rem);
+        }
+
+        .cinema-brand {
+          position: absolute;
+          text-align: center;
+          opacity: 0;
+          animation: cinema-brand-enter 1.7s cubic-bezier(.16,1,.3,1) forwards;
+          animation-delay: 6.25s;
+        }
+
+        .cinema-brand h1 {
+          margin: 0;
+          font-size: clamp(3.5rem, 12vw, 9rem);
+          line-height: 1;
           letter-spacing: .12em;
+          font-weight: 950;
+          color: #f5f6f8;
+          text-shadow:
+            0 0 25px rgba(230,235,245,.24),
+            0 0 90px rgba(190,205,225,.16);
         }
 
-        .cinema-tagline {
-          position: absolute;
-          top: 67%;
-          width: 100%;
-          padding: 0 15px;
-          text-align: center;
-          color: #c7dced;
-          font-size: clamp(10px, 2vw, 14px);
-          letter-spacing: .32em;
-          opacity: 0;
-          animation: cinema-reveal 1.1s ease 6.35s forwards;
+        .cinema-brand-line {
+          width: 0;
+          height: 1px;
+          margin: 25px auto 0;
+          background: linear-gradient(90deg, transparent, #f4f5f7, transparent);
+          animation: cinema-line 1s ease forwards;
+          animation-delay: 7.1s;
         }
 
-        .cinema-author {
+        .cinema-credit {
           position: absolute;
-          bottom: 112px;
-          width: 100%;
+          z-index: 8;
+          bottom: 105px;
+          left: 0;
+          right: 0;
           text-align: center;
-          color: rgba(205,225,245,.65);
+          color: rgba(235,239,245,.75);
           font-size: 10px;
-          letter-spacing: .28em;
+          font-weight: 600;
+          letter-spacing: .38em;
           opacity: 0;
-          animation: cinema-reveal 1s ease 6.8s forwards;
+          animation: cinema-credit-enter 1s ease forwards;
+          animation-delay: 7.15s;
         }
 
         .cinema-loading {
           position: absolute;
+          z-index: 8;
           bottom: 35px;
-          left: 8%;
-          right: 8%;
-          z-index: 5;
+          left: 50%;
+          width: min(260px, 65vw);
+          transform: translateX(-50%);
+          opacity: 0;
+          animation: cinema-loading-enter .7s ease forwards;
+          animation-delay: .5s;
         }
 
-        .cinema-loading-label {
+        .cinema-loading-top {
           display: flex;
           justify-content: space-between;
           margin-bottom: 10px;
-          color: rgba(205,225,245,.65);
+          color: rgba(225,230,240,.65);
           font-size: 9px;
           letter-spacing: .2em;
         }
 
-        .cinema-track {
+        .cinema-progress-track {
+          width: 100%;
           height: 2px;
-          background: rgba(190,220,250,.16);
+          background: rgba(255,255,255,.12);
           overflow: hidden;
         }
 
-        .cinema-progress {
+        .cinema-progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #4779a8, #d8edff);
-          box-shadow: 0 0 18px #8ccaff;
+          background: linear-gradient(90deg, #858d99, #fff);
+          box-shadow: 0 0 15px rgba(230,240,255,.55);
           transition: width .08s linear;
         }
 
-        .cinema-corner {
-          position: absolute;
-          top: 30px;
-          left: 5%;
-          right: 5%;
-          display: flex;
-          justify-content: space-between;
-          color: rgba(205,225,245,.45);
-          font-size: 9px;
-          letter-spacing: .25em;
-        }
-
-        .cinema-flash {
-          position: absolute;
-          inset: 0;
-          z-index: 4;
+        .cinema-leaving {
+          animation: cinema-exit 1.1s cubic-bezier(.7,0,.2,1) forwards;
           pointer-events: none;
-          background: white;
-          opacity: 0;
-          animation: cinema-flash 7.5s ease both;
         }
 
-        @keyframes word-through-camera {
+        @keyframes cinema-word-arrive {
           0% {
             opacity: 0;
-            transform: translateZ(-1100px) scale(.12) rotateX(18deg);
-            filter: blur(22px);
+            transform: translateZ(-1000px) scale(.2);
+            filter: blur(18px);
           }
           20% {
             opacity: 1;
             filter: blur(0);
           }
-          68% {
+          75% {
             opacity: 1;
-            transform: translateZ(100px) scale(1.1) rotateX(0);
+            transform: translateZ(100px) scale(1.15);
           }
           100% {
             opacity: 0;
-            transform: translateZ(1100px) scale(3.2) rotateX(-8deg);
-            filter: blur(20px);
+            transform: translateZ(900px) scale(2.5);
+            filter: blur(12px);
           }
         }
 
-        @keyframes brand-arrival {
+        @keyframes cinema-brand-enter {
           0% {
             opacity: 0;
-            transform: translateZ(-1000px) scale(.15);
-            filter: blur(25px);
+            transform: scale(.65) translateY(25px);
+            filter: blur(15px);
           }
-          55% {
+          65% {
             opacity: 1;
-            transform: translateZ(80px) scale(1.15);
             filter: blur(0);
-          }
-          75% {
-            transform: translateZ(0) scale(1);
           }
           100% {
             opacity: 1;
-            transform: translateZ(0) scale(1);
-          }
-        }
-
-        @keyframes camera-flight {
-          0% { transform: translateZ(-150px) scale(.85); }
-          40% { transform: translateZ(100px) scale(1.1); }
-          75% { transform: translateZ(-40px) scale(1.03); }
-          100% { transform: translateZ(0) scale(1); }
-        }
-
-        @keyframes cinema-reveal {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-            filter: blur(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+            transform: scale(1) translateY(0);
             filter: blur(0);
           }
+        }
+
+        @keyframes cinema-line {
+          to { width: min(260px, 60vw); }
+        }
+
+        @keyframes cinema-credit-enter {
+          from { opacity: 0; transform: translateY(15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes cinema-loading-enter {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
         @keyframes cinema-atmosphere {
-          from { transform: scale(.9) rotate(-5deg); }
-          to { transform: scale(1.2) rotate(8deg); }
+          from { transform: rotate(0deg) scale(1); }
+          to { transform: rotate(12deg) scale(1.15); }
         }
 
         @keyframes cinema-grid-move {
@@ -270,39 +309,43 @@ function CinematicIntro({ onDone }) {
           to { background-position: 0 150px; }
         }
 
-        @keyframes cinema-flash {
-          0%, 20%, 40%, 60%, 100% { opacity: 0; }
-          21% { opacity: .2; }
-          41% { opacity: .14; }
-          61% { opacity: .25; }
+        @keyframes silver-sweep {
+          0% { transform: translateX(-120%); }
+          100% { transform: translateX(120%); }
         }
 
         @keyframes cinema-exit {
           to {
             opacity: 0;
+            transform: scale(1.04);
+            filter: blur(12px);
             visibility: hidden;
-            transform: scale(1.06);
-            filter: blur(15px);
-            pointer-events: none;
           }
         }
 
         @media (max-width: 600px) {
-          .cinema-word {
-            white-space: normal;
-            overflow-wrap: anywhere;
+          .cinema-credit {
+            bottom: 95px;
+            font-size: 8px;
+            letter-spacing: .25em;
           }
 
-          .cinema-author { bottom: 95px; }
-          .cinema-loading { bottom: 24px; }
+          .cinema-word {
+            letter-spacing: -.06em;
+          }
+
+          .cinema-brand h1 {
+            letter-spacing: .08em;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .presora-cinema,
           .cinema-word,
-          .cinema-camera,
-          .cinema-tagline,
-          .cinema-author {
+          .cinema-brand,
+          .cinema-brand-line,
+          .cinema-credit,
+          .cinema-light,
+          .cinema-grid {
             animation-duration: .01ms !important;
             animation-delay: 0ms !important;
           }
@@ -310,37 +353,32 @@ function CinematicIntro({ onDone }) {
       `}</style>
 
       <div className="cinema-grid" />
-      <div className="cinema-flash" />
+      <div className="cinema-light" />
 
-      <div className="cinema-corner">
-        <span>PRESORA / EXPERIENCE</span>
-        <span>CREATIVE STUDIO</span>
+      <div className="cinema-content">
+        <div className="cinema-word one">IMAGINE</div>
+        <div className="cinema-word two">CREATE</div>
+        <div className="cinema-word three">TRANSFORM</div>
+        <div className="cinema-word four">YOUR WORLD</div>
+
+        <div className="cinema-brand">
+          <h1>PRESORA</h1>
+          <div className="cinema-brand-line" />
+        </div>
       </div>
 
-      <div className="cinema-camera">
-        <div className="cinema-word w1">IMAGINE</div>
-        <div className="cinema-word w2">CREATE</div>
-        <div className="cinema-word w3">TRANSFORM</div>
-        <div className="cinema-word w4">YOUR WORLD</div>
-        <div className="cinema-word brand">PRESORA</div>
-      </div>
-
-      <div className="cinema-tagline">
-        YOUR VISION. YOUR WORLD.
-      </div>
-
-      <div className="cinema-author">
+      <div className="cinema-credit">
         CREATED BY MOTAZ SOUIDI
       </div>
 
       <div className="cinema-loading">
-        <div className="cinema-loading-label">
-          <span>ENTERING PRESORA</span>
+        <div className="cinema-loading-top">
+          <span>LOADING EXPERIENCE</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="cinema-track">
+        <div className="cinema-progress-track">
           <div
-            className="cinema-progress"
+            className="cinema-progress-fill"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -351,7 +389,10 @@ function CinematicIntro({ onDone }) {
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true)
-  const handleIntroDone = useCallback(() => setShowIntro(false), [])
+
+  const handleIntroDone = useCallback(() => {
+    setShowIntro(false)
+  }, [])
 
   return (
     <>
@@ -363,9 +404,10 @@ export default function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/order" element={<Order />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
+
+        <Route path="/admin" element={<Admin />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       {showIntro && <CinematicIntro onDone={handleIntroDone} />}
