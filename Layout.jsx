@@ -1,6 +1,7 @@
+
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Logo } from './ui.jsx'
+import { Logo, LangSwitcher } from './ui.jsx'
 import { WA, MAIL } from './supabase.js'
 
 const LINKS = [
@@ -19,14 +20,21 @@ export default function Layout() {
       <header className="header">
         <div className="container header-inner">
           <Logo />
-          <button
-            type="button"
-            className="nav-toggle"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-          >
-            {open ? 'Close' : 'Menu'}
-          </button>
+
+          <div className="header-actions">
+            <LangSwitcher />
+
+            <button
+              type="button"
+              className="nav-toggle"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-label={open ? 'Close navigation' : 'Open navigation'}
+            >
+              {open ? 'Close' : 'Menu'}
+            </button>
+          </div>
+
           <nav className={`nav-links ${open ? 'open' : ''}`}>
             {LINKS.map(([to, label]) => (
               <NavLink
@@ -34,7 +42,9 @@ export default function Layout() {
                 to={to}
                 end={to === '/'}
                 onClick={close}
-                className={({ isActive }) => (isActive ? 'active' : '')}
+                className={({ isActive }) =>
+                  isActive ? 'active' : ''
+                }
               >
                 {label}
               </NavLink>
@@ -56,6 +66,7 @@ export default function Layout() {
                 WE TURN IDEAS INTO IMPACT.
               </p>
             </div>
+
             <div>
               <h4>Pages</h4>
               <ul>
@@ -66,29 +77,40 @@ export default function Layout() {
                 ))}
               </ul>
             </div>
+
             <div>
               <h4>Contact</h4>
               <ul>
                 {WA && (
                   <li>
-                    <a href={`https://wa.me/${WA}`} target="_blank" rel="noreferrer">
+                    <a
+                      href={`https://wa.me/${WA}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       WhatsApp
                     </a>
                   </li>
                 )}
+
                 {MAIL && (
                   <li>
                     <a href={`mailto:${MAIL}`}>{MAIL}</a>
                   </li>
                 )}
+
                 <li>
                   <Link to="/admin">Admin</Link>
                 </li>
               </ul>
             </div>
           </div>
+
           <div className="footer-note">
-            <span>© {new Date().getFullYear()} PRESORA. All rights reserved.</span>
+            <span>
+              © {new Date().getFullYear()} PRESORA. All rights reserved.
+            </span>
+
             <span className="signature">
               Created by <b>M.S.</b>
             </span>
