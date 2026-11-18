@@ -1663,3 +1663,439 @@ const DICT = {
   },
 }
 // DICT-END
+
+/* ================================================================
+   LANGUAGE SYSTEM
+================================================================ */
+
+export const LANGS = ['en', 'fr', 'ar']
+
+export const LANG_NAMES = {
+  en: 'English',
+  fr: 'Français',
+  ar: 'العربية',
+}
+
+export const LOCALES = {
+  en: 'en-US',
+  fr: 'fr-FR',
+  ar: 'ar-u-nu-latn',
+}
+
+export const STORAGE_KEY = 'presora-language'
+
+const LanguageContext = createContext(null)
+
+function getInitialLanguage() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return LANGS.includes(saved) ? saved : 'en'
+  } catch {
+    return 'en'
+  }
+}
+
+function interpolate(value, variables = {}) {
+  if (typeof value !== 'string') return value
+
+  return value.replace(/\{(\w+)\}/g, (match, key) => {
+    return variables[key] !== undefined ? String(variables[key]) : match
+  })
+}
+
+export function LanguageProvider({ children }) {
+  const [lang, setLang] = useState(getInitialLanguage)
+
+  const changeLanguage = useCallback((nextLang) => {
+    if (!LANGS.includes(nextLang)) return
+
+    setLang(nextLang)
+
+    try {
+      localStorage.setItem(STORAGE_KEY, nextLang)
+    } catch {
+      // The language still works for the current session.
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    document.documentElement.lang = lang
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.dataset.lang = lang
+  }, [lang])
+
+  const t = useCallback((key, variables = {}) => {
+    const entry = DICTIONARY[key]
+
+    if (!entry) return key
+
+    const value = entry[lang] ?? entry.en ?? key
+
+    return interpolate(value, variables)
+  }, [lang])
+
+  const value = useMemo(() => ({
+    lang,
+    setLang: changeLanguage,
+    t,
+    isRTL: lang === 'ar',
+    locale: LOCALES[lang],
+  }), [lang, changeLanguage, t])
+
+  return (
+    <LanguageContext.Provider value={value}>
+      {children}
+    </LanguageContext.Provider>
+  )
+}
+
+export function useLanguage() {
+  const context = useContext(LanguageContext)
+
+  if (!context) {
+    throw new Error('useLanguage must be used inside LanguageProvider')
+  }
+
+  return context
+}
+
+export function useT() {
+  return useLanguage().t
+}
+
+export function Words({ k, values, children }) {
+  const { t } = useLanguage()
+
+  if (!k) return children ?? null
+
+  const result = t(k, values)
+
+  if (typeof result === 'object') return null
+
+  return result
+}
+
+/* ================================================================
+   LANGUAGE SWITCHER
+================================================================ */
+
+export function LangSwitcher({ className = '' }) {
+  const { lang, setLang } = useLanguage()
+
+  return (
+    <div className={`lang-switcher ${className}`}>
+      <label className="sr-only" htmlFor="presora-language">
+        Select language
+      </label>
+
+      <select
+        id="presora-language"
+        value={lang}
+        onChange={(event) => setLang(event.target.value)}
+        aria-label="Select website language"
+      >
+        {LANGS.map((code) => (
+          <option key={code} value={code}>
+            {LANG_NAMES[code]}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+}
+
+/* ================================================================
+   MOTION SETTINGS
+================================================================ */
+
+export const EASE = [0.22, 1, 0.36, 1]
+
+/* ================================================================
+   LOGO
+================================================================ */
+
+export function Logo({ className = '', to = '/' }) {
+  return (
+    <Link
+      to={to}
+      className={`logo ${className}`}
+      aria-label="PRESORA home"
+    >
+      <span className="logo-mark">P</span>
+      <span className="logo-name">PRESORA</span>
+    </Link>
+  )
+}
+
+/* ================================================================
+   BUTTON
+================================================================ */
+
+export function Button({
+  children,
+  to,
+  href,
+  variant = 'primary',
+  className = '',
+  type = 'button',
+  disabled = false,
+  ...props
+}) {
+  const classes = `btn btn-${variant} ${className}`.trim()
+
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className={classes}
+        aria-disabled={disabled}
+        onClick={disabled ? (event) => event.preventDefault() : undefined}
+        {...props}
+      >
+        {children}
+      </Link>
+    )
+  }
+
+  if (href) {
+    return (
+      <a
+        href={disabled ? undefined : href}
+        className={classes}
+        aria-disabled={disabled}
+        {...props}
+      >
+        {children}
+      </a>
+    )
+  }
+
+  return (
+    <button
+      type={type}
+      className={classes}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+/* ================================================================
+   CARD
+================================================================ */
+
+export function Card({ children, className = '', ...props }) {
+  return (
+    <div className={`card ${className}`.trim()} {...props}>
+      {children}
+    </div>
+  )
+}
+
+/* ================================================================
+   FIELD
+================================================================ */
+
+export function Field({
+  label,
+  hint,
+  children,
+  className = '',
+  ...props
+}) {
+  return (
+    <div className={`field ${className}`.trim()} {...props}>
+      {label && <label className="field-label">{label}</label>}
+
+      {children}
+
+      {hint && <small className="field-hint">{hint}</small>}
+    </div>
+  )
+}
+
+/* ================================================================
+   SECTION
+================================================================ */
+
+export function Section({
+  eyebrow,
+  title,
+  intro,
+  children,
+  id,
+  className = '',
+  ...props
+}) {
+  return (
+    <section
+      id={id}
+      className={`section ${className}`.trim()}
+      {...props}
+    >
+      <div className="container">
+        {(eyebrow || title || intro) && (
+          <div className="section-heading">
+            {eyebrow && (
+              <span className="section-eyebrow">{eyebrow}</span>
+            )}
+
+            {title && <h2 className="section-title">{title}</h2>}
+
+            {intro && <p className="section-intro">{intro}</p>}
+          </div>
+        )}
+
+        {children}
+      </div>
+    </section>
+  )
+}
+
+/* ================================================================
+   INTRO ANIMATION
+================================================================ */
+
+export function Intro({ onDone }) {
+  const finished = useRef(false)
+
+  const finish = useCallback(() => {
+    if (finished.current) return
+
+    finished.current = true
+    onDone?.()
+  }, [onDone])
+
+  useEffect(() => {
+    const timer = window.setTimeout(finish, 4500)
+
+    return () => window.clearTimeout(timer)
+  }, [finish])
+
+  return (
+    <div className="presora-intro" role="status" aria-label="PRESORA">
+      <style>{`
+        .presora-intro {
+          position: fixed;
+          inset: 0;
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          background: #101b2d;
+          color: #fff;
+          animation: presora-intro-out .65s ease 3.8s forwards;
+        }
+
+        .presora-intro-logo {
+          display: flex;
+          align-items: center;
+          gap: 13px;
+          animation: presora-intro-in .9s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        .presora-intro-mark {
+          display: grid;
+          place-items: center;
+          width: 54px;
+          height: 54px;
+          border: 1px solid rgba(255,255,255,.35);
+          font-size: 29px;
+          font-weight: 700;
+          animation: presora-intro-mark 1.2s ease both;
+        }
+
+        .presora-intro-name {
+          font-size: clamp(25px, 5vw, 38px);
+          font-weight: 700;
+          letter-spacing: .19em;
+        }
+
+        .presora-intro-line {
+          width: 110px;
+          height: 1px;
+          margin-top: 27px;
+          background: rgba(255,255,255,.2);
+          overflow: hidden;
+        }
+
+        .presora-intro-line::after {
+          content: '';
+          display: block;
+          width: 100%;
+          height: 100%;
+          background: #fff;
+          transform: scaleX(0);
+          transform-origin: left;
+          animation: presora-intro-progress 3s ease .5s forwards;
+        }
+
+        .presora-intro-skip {
+          position: absolute;
+          bottom: 30px;
+          color: rgba(255,255,255,.55);
+          background: none;
+          border: 0;
+          font: inherit;
+          font-size: 12px;
+          cursor: pointer;
+          letter-spacing: .08em;
+        }
+
+        @keyframes presora-intro-in {
+          from { opacity: 0; transform: translateY(18px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes presora-intro-mark {
+          from { transform: rotate(-12deg) scale(.8); }
+          to { transform: rotate(0) scale(1); }
+        }
+
+        @keyframes presora-intro-progress {
+          to { transform: scaleX(1); }
+        }
+
+        @keyframes presora-intro-out {
+          to {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .presora-intro,
+          .presora-intro-logo,
+          .presora-intro-mark,
+          .presora-intro-line::after {
+            animation-duration: .01ms !important;
+            animation-delay: 0ms !important;
+          }
+        }
+      `}</style>
+
+      <div className="presora-intro-logo">
+        <span className="presora-intro-mark">P</span>
+        <span className="presora-intro-name">PRESORA</span>
+      </div>
+
+      <div className="presora-intro-line" />
+
+      <button
+        type="button"
+        className="presora-intro-skip"
+        onClick={finish}
+      >
+        SKIP INTRO
+      </button>
+    </div>
+  )
+}
+
+/* ================================================================
+   END OF FILE
+================================================================ */
