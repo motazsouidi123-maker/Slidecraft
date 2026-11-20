@@ -1,0 +1,15 @@
+PRESORA — Feature 1: Executive Signature Showcase
+
+Files:
+- Home.jsx (complete updated home page)
+- ExecutiveShowcase.jsx (new executive showcase component)
+- executive-showcase.css (isolated ivory / beige / bronze styles)
+
+Replace your existing Home.jsx with this Home.jsx.
+Place ExecutiveShowcase.jsx and executive-showcase.css beside Home.jsx.
+
+The updated Home.jsx imports the component and passes the existing CATEGORIES sample data into it. All other homepage sections remain in the file. The showcase styling is scoped to .exec-showcase-* and does not change global site colors.
+
+No services, prices, orders, Supabase logic, language system, or intro logic is modified.
+
+Validation: JSX syntax was checked with the locally available TypeScript transpiler. No browser run or production build was performed.
